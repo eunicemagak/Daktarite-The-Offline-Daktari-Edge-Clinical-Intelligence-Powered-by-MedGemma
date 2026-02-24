@@ -1,0 +1,11 @@
+/* Minimal reset / styling */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif; /* Updated font */
+  background-color: #F4F7FA;
+  color: #16171a;
+}
+
+button {
+  cursor: pointer;
+}
