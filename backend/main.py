@@ -10,17 +10,19 @@ from triage import apply_triage_rules
 from benchmarking import start_benchmark, end_benchmark
 from schemas import ClinicalInput
 from logger import log_case
-from datetime import datetime
-
 
 app = FastAPI()
 
+# Initialize SQLite DB
 init_db()
 
-# Enable frontend access
+# CORS middleware: allow localhost and 127.0.0.1
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,9 +32,8 @@ app.add_middleware(
 @app.post("/analyze")
 def analyze(input: ClinicalInput):
     """
-    Main endpoint for clinical analysis with logging and error handling.
+    Main endpoint for clinical analysis
     """
-
     benchmark_start = start_benchmark()
 
     # Build strict prompt
@@ -59,14 +60,11 @@ def analyze(input: ClinicalInput):
 
     benchmark_result = end_benchmark(benchmark_start)
 
-    # Log case
+    # Log and save case
     log_case(input.note, final_result, benchmark_result)
-
-    # Save to SQLite
-    # Use None for new cases; if you want updates in future, pass case_id
     save_case(input.note, final_result, benchmark_result)
 
-    # Return response to frontend
+    # Return response
     return {
         "note": input.note,
         "clinical_output": final_result,
@@ -77,6 +75,6 @@ def analyze(input: ClinicalInput):
 @app.get("/history")
 def get_history():
     """
-    Return all cases including created_at and updated_at
+    Return all saved cases
     """
     return get_all_cases()

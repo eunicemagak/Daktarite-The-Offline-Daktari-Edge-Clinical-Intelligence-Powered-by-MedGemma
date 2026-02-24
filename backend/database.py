@@ -4,10 +4,9 @@ import json
 
 DB_NAME = "daktarite.db"
 
-
 def init_db():
     """
-    Creates clinical_cases table if it doesn't exist, with created_at and updated_at.
+    Creates the clinical_cases table if it doesn't exist, with created_at and updated_at columns.
     """
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
@@ -29,12 +28,15 @@ def init_db():
 
 def save_case(note: str, clinical_output: dict, benchmark: dict, case_id: int = None):
     """
-    Inserts a new clinical case or updates existing one.
-    If case_id is provided, it updates that row (updated_at changes).
+    Inserts a new clinical case or updates an existing one.
+    If case_id is provided, updates that row (updates updated_at timestamp).
     """
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     now = datetime.utcnow().isoformat()
+
+    clinical_output_json = json.dumps(clinical_output)
+    benchmark_json = json.dumps(benchmark)
 
     if case_id:
         # Update existing case
@@ -44,8 +46,8 @@ def save_case(note: str, clinical_output: dict, benchmark: dict, case_id: int = 
             WHERE id = ?
         """, (
             note,
-            json.dumps(clinical_output),
-            json.dumps(benchmark),
+            clinical_output_json,
+            benchmark_json,
             now,
             case_id
         ))
@@ -56,8 +58,8 @@ def save_case(note: str, clinical_output: dict, benchmark: dict, case_id: int = 
             VALUES (?, ?, ?, ?, ?)
         """, (
             note,
-            json.dumps(clinical_output),
-            json.dumps(benchmark),
+            clinical_output_json,
+            benchmark_json,
             now,
             now
         ))
