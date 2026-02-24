@@ -48,6 +48,6 @@ The hybrid AI + rules architecture ensures **safer, deterministic, and edge-read
 > Requires Python 3.10+  
 
 ```bash
-git clone https://github.com/eunicemagak/Daktarite.git
+git clone https://github.com/eunicemagak/Daktarite-The-Offline-Daktari-Edge-Clinical-Intelligence-Powered-by-MedGemma
 cd Daktarite/backend
 pip install -r requirements.txt
